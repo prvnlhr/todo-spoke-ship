@@ -2,7 +2,7 @@
 # Offline fallback: load app.tar then: docker tag todo-app:1.1 localhost:5000/todo-app:latest
 
 x-app: &app
-  image: ${APP_IMAGE:-localhost:5000/todo-app:latest}
+  image: ${APP_IMAGE:-ghcr.io/prvnlhr/todo-app:latest}
   pull_policy: always
   env_file:
     - .env
