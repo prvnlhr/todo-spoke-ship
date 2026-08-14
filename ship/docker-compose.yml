@@ -1,0 +1,82 @@
+# Production spoke — image from registry; Watchtower pulls updates.
+# Offline fallback: load app.tar then: docker tag todo-app:1.1 localhost:5000/todo-app:latest
+
+x-app: &app
+  image: ${APP_IMAGE:-localhost:5000/todo-app:latest}
+  pull_policy: always
+  env_file:
+    - .env
+  volumes:
+    - app_storage:/var/www/html/storage
+    - ./.env:/var/www/html/.env
+  labels:
+    - "com.centurylinklabs.watchtower.enable=true"
+  restart: unless-stopped
+  networks:
+    - spoke
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "80:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  worker:
+    <<: *app
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    depends_on:
+      app:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+
+  scheduler:
+    <<: *app
+    command: >
+      sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    depends_on:
+      app:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - spoke
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 30
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_INCLUDE_STOPPED: "false"
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  app_storage:
+
+networks:
+  spoke:
+    driver: bridge
