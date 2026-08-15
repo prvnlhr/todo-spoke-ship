@@ -213,4 +213,5 @@ docker compose down
 
 - Friend must **not** use `APP_IMAGE=localhost:5000/...` (that is only your PC).  
 - Friend must **not** use `HUB_URL=http://localhost:8080` (that is their own machine).  
-- `install.bat` is Windows-only; Mac uses the steps in Part C.
+- `install.bat` is Windows-only; Mac uses the steps in Part C.  
+- If Docker says `operation not permitted` on `.env` / Desktop: move the repo out of Desktop, or Docker Desktop → Settings → Resources → File sharing, and allow that folder. Current compose does not bind-mount `.env` (env vars come from `env_file` only).
