@@ -196,7 +196,7 @@
 <body>
 <div class="shell">
     <aside class="sidebar">
-        <p class="brand">Todo <span>Hub 1.5</span></p>
+        <p class="brand">Todo <span>Hub OTA</span></p>
         <p class="muted" style="margin:0 0 1rem;font-size:0.75rem">v{{ config('app.version') }} · OTA demo</p>
         <nav class="nav">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>

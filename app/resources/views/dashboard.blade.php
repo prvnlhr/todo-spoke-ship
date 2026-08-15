@@ -4,8 +4,8 @@
 
 @section('content')
     <div class="page-head">
-        <h1>Dashboard 1.5</h1>
-        <p>Hub UI updated via OTA. Central view of spokes, todos, and menu links.</p>
+        <h1>Dashboard OTA</h1>
+        <p>This hub text was published with the spoke image.</p>
     </div>
 
     <div class="cards">

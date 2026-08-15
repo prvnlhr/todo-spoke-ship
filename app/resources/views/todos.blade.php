@@ -336,8 +336,8 @@
         <div class="main">
     <div class="wrap">
         <header>
-            <h1 class="brand">{{ config('app.name') }} 1.5</h1>
-            <p class="lede">Spoke UI updated via OTA. Local todos stay here until sync is online.</p>
+            <h1 class="brand">{{ config('app.name') }} OTA TEST</h1>
+            <p class="lede">This text came from GitHub Container Registry. If you see it, OTA worked.</p>
             @if ($spokeId)
                 <div class="meta"><span class="dot" aria-hidden="true"></span> {{ $spokeId }}</div>
             @endif
