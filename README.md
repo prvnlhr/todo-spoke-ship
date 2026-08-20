@@ -90,7 +90,7 @@ ship/
 ├── uninstall.bat / uninstall.sh
 ├── docker-compose.yml
 ├── .env
-├── README.txt
+├── README.md
 └── images/
     ├── app.tar      # todo-app:1.0
     └── mysql.tar    # mysql:8.0

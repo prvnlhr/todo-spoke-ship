@@ -64,7 +64,7 @@ echo    update.bat / update.sh
 echo    uninstall.bat / uninstall.sh
 echo    docker-compose.yml
 echo    .env
-echo    README.txt
+echo    README.md
 echo    images\app.tar
 echo    images\mysql.tar
 echo ============================================
