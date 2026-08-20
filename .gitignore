@@ -3,7 +3,7 @@
 !.env.example
 !**/.env.example
 *.tar
-ship/images/*.tar
+!ship/images/*.tar
 app/vendor
 app/node_modules
 app/storage/logs/*.log

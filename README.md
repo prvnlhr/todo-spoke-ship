@@ -45,7 +45,7 @@ On your PC (Docker running; internet only needed here to build / pull MySQL once
 **Windows:** `build-ship.bat`  
 **Mac / Linux:** `./build-ship.sh`
 
-Then zip the `ship/` folder or copy it to a USB stick.
+Then zip the `ship/` folder or copy it to a USB stick. `ship/images/*.tar` is stored in Git LFS, so a full clone also includes the images (`git lfs install` once, then `git clone` / `git lfs pull`).
 
 The client:
 
