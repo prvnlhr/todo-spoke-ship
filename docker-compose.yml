@@ -1,75 +1,54 @@
-x-app-image: &app-image
-  build:
-    context: .
-    dockerfile: Dockerfile
-  image: todo-app:1.1
-  pull_policy: build
-  env_file:
-    - ./app/.env
-  environment:
-    APP_ROLE: spoke
-    APP_VERSION: "1.1.0"
-    HUB_URL: http://host.docker.internal:8080
-    HUB_API_TOKEN: token-demo-01
-    SPOKE_ID: spoke-demo-01
-  volumes:
-    - ./app:/var/www/html
-    - vendor_data:/var/www/html/vendor
-  restart: unless-stopped
-  networks:
-    - spoke
-
 services:
   app:
-    <<: *app-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: todo-app:1.0
+    pull_policy: build
     ports:
-      - "80:8000"
+      - "8080:8000"
+    env_file:
+      - .env
+    environment:
+      APP_NAME: Todo
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+    volumes:
+      - app_storage:/var/www/html/storage
     depends_on:
       mysql:
         condition: service_healthy
-
-  worker:
-    <<: *app-image
-    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
-    depends_on:
-      app:
-        condition: service_started
-      mysql:
-        condition: service_healthy
-
-  scheduler:
-    <<: *app-image
-    command: >
-      sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
-    depends_on:
-      app:
-        condition: service_started
-      mysql:
-        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - todo
 
   mysql:
     image: mysql:8.0
+    ports:
+      - "3307:3306"
     environment:
-      MYSQL_DATABASE: todo_spoke
-      MYSQL_USER: todo
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_PASSWORD: rootsecret
+      MYSQL_DATABASE: ${DB_DATABASE:-todo}
+      MYSQL_USER: ${DB_USERNAME:-todo}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-prootsecret"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD:-rootsecret}"]
       interval: 5s
       timeout: 5s
       retries: 20
       start_period: 10s
     restart: unless-stopped
     networks:
-      - spoke
+      - todo
 
 volumes:
   mysql_data:
-  vendor_data:
+  app_storage:
 
 networks:
-  spoke:
+  todo:
     driver: bridge

@@ -123,16 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'spoke_id' => env('SPOKE_ID'),
-
-    'role' => env('APP_ROLE', 'spoke'),
-
     'version' => env('APP_VERSION', '1.0.0'),
-
-    'hub_url' => env('HUB_URL'),
-
-    'hub_api_token' => env('HUB_API_TOKEN'),
-
-    'sync_enabled' => filter_var(env('SYNC_ENABLED', true), FILTER_VALIDATE_BOOL),
 
 ];

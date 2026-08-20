@@ -1,16 +1,13 @@
-Todo App - Install
+Todo App
 
-1. Right-click install.bat
-2. Choose "Run as administrator"
-3. Wait until it says DONE
-4. Open the "Todo App" shortcut on the Desktop
+Windows: double-click install.bat
+Mac:     double-click install.command
+Linux:   bash install.sh
 
-Do not open Docker or change any files.
+Then open http://localhost:8080
 
-If Docker Desktop was just installed:
-- Start Docker Desktop from the Start Menu
-- Wait until it says Docker is running
-- Run install.bat again
+Needs Docker Desktop (or Docker Engine) running.
+The first run loads images; later runs start in a few seconds.
 
-Tip: In Docker Desktop Settings, enable
-"Start Docker Desktop when you sign in"
+Update later: run update.bat / update.sh from a new USB package.
+Uninstall: uninstall.bat / uninstall.sh (todos stay in Docker until you remove volumes).

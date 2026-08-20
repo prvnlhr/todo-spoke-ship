@@ -3,7 +3,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 
 echo ============================================
-echo  Build Todo Spoke ship package
+echo  Build Todo ship package
 echo ============================================
 echo.
 
@@ -19,9 +19,11 @@ if errorlevel 1 (
   exit /b 1
 )
 
+if not exist ".env" copy /Y ".env.example" ".env" >nul
 if not exist "ship\images" mkdir "ship\images"
+if not exist "ship\.env" copy /Y "ship\.env.example" "ship\.env" >nul
 
-echo [1/4] Building app image todo-app:1.1 ...
+echo [1/4] Building app image todo-app:1.0 ...
 docker compose build app
 if errorlevel 1 (
   echo Build failed.
@@ -41,43 +43,29 @@ if errorlevel 1 (
 
 echo.
 echo [3/4] Saving images to ship\images\ ...
-docker save todo-app:1.1 -o ship\images\app.tar
+docker save todo-app:1.0 -o ship\images\app.tar
 if errorlevel 1 (
   echo Failed to save app image.
   exit /b 1
 )
 docker save mysql:8.0 -o ship\images\mysql.tar
 if errorlevel 1 (
-  echo Failed to save mysql image.
+  echo Failed to save MySQL image.
   exit /b 1
 )
 
 echo.
-echo [4/4] Preparing ship\.env ...
-if exist "ship\.env" (
-  echo ship\.env already exists — leaving it unchanged.
-) else (
-  copy /Y "ship\.env.example" "ship\.env" >nul
-  echo Created ship\.env from .env.example
-  echo IMPORTANT: Set APP_KEY, SPOKE_ID, and strong DB passwords before shipping.
-  echo Generate APP_KEY with:
-  echo   docker compose exec app php artisan key:generate --show
-)
-
+echo [4/4] Ship folder ready.
 echo.
 echo ============================================
-echo  Ship package ready: ship\
-echo.
-echo  Contents to give the client:
-echo    ship\install.bat
-echo    ship\update.bat
-echo    ship\docker-compose.yml
-echo    ship\.env
-echo    ship\README.txt
-echo    ship\images\app.tar
-echo    ship\images\mysql.tar
-echo    (optional) Docker Desktop Installer.exe
-echo.
-echo  Zip the ship folder or copy it to a USB stick.
+echo  Give the client the ship\ folder as a zip or USB:
+echo    install.bat / install.command / install.sh
+echo    update.bat / update.sh
+echo    uninstall.bat / uninstall.sh
+echo    docker-compose.yml
+echo    .env
+echo    README.txt
+echo    images\app.tar
+echo    images\mysql.tar
 echo ============================================
 endlocal

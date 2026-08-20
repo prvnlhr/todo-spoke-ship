@@ -8,18 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('todos')) {
-            return;
-        }
-
         Schema::create('todos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('title');
             $table->boolean('done')->default(false);
-            $table->string('spoke_id')->nullable()->index();
-            $table->timestamp('synced_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

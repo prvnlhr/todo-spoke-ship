@@ -5,22 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f1c18;
-            --bg-elevated: #162821;
-            --ink: #e8f0ec;
-            --muted: #8aa396;
-            --line: #2a4037;
-            --accent: #3ecf8e;
-            --accent-ink: #062216;
-            --danger: #f07178;
-            --radius: 12px;
-            --font: "DM Sans", system-ui, sans-serif;
-            --display: "Fraunces", Georgia, serif;
+            --bg: #f4f1ea;
+            --paper: #fffdf8;
+            --ink: #1c1917;
+            --muted: #78716c;
+            --line: #e7e0d6;
+            --accent: #0f766e;
+            --accent-ink: #f0fdfa;
+            --danger: #b91c1c;
+            --shadow: 0 18px 40px rgba(28, 25, 23, 0.08);
+            --radius: 16px;
         }
 
         * { box-sizing: border-box; }
@@ -28,145 +24,64 @@
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: var(--font);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             color: var(--ink);
             background:
-                radial-gradient(1200px 600px at 10% -10%, #1d3d32 0%, transparent 55%),
-                radial-gradient(900px 500px at 100% 0%, #243528 0%, transparent 50%),
+                radial-gradient(900px 420px at 0% 0%, #d7efe9 0%, transparent 60%),
+                radial-gradient(700px 380px at 100% 10%, #f3e6d4 0%, transparent 55%),
                 var(--bg);
         }
 
         .wrap {
-            width: min(560px, calc(100% - 2rem));
+            width: min(640px, calc(100% - 2rem));
             margin: 0 auto;
-            padding: 3rem 0 4rem;
+            padding: 3.5rem 0 4rem;
         }
 
-        .shell {
-            display: grid;
-            grid-template-columns: 1fr;
-            min-height: 100vh;
-        }
+        header { margin-bottom: 1.75rem; }
 
-        .shell.has-nav {
-            grid-template-columns: 220px 1fr;
-        }
-
-        .nav {
-            display: none;
-            padding: 2rem 1rem;
-            border-right: 1px solid var(--line);
-            background: color-mix(in srgb, var(--bg-elevated) 90%, black);
-        }
-
-        .shell.has-nav .nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        .nav-title {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--muted);
-            margin: 0 0 0.75rem 0.5rem;
-        }
-
-        .nav a {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.65rem 0.75rem;
-            border-radius: 10px;
-            color: var(--muted);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .nav a:hover {
-            color: var(--ink);
-            background: color-mix(in srgb, white 5%, transparent);
-        }
-
-        .nav-icon {
-            width: 1.25rem;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-
-        .version {
-            margin-top: auto;
-            padding: 0.75rem 0.5rem 0;
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        .main { min-width: 0; }
-
-        header {
-            margin-bottom: 2rem;
-            animation: rise 0.5s ease both;
-        }
-
-        .brand {
-            font-family: var(--display);
-            font-size: clamp(2rem, 6vw, 2.75rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
+        h1 {
+            margin: 0 0 0.4rem;
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            letter-spacing: -0.04em;
             line-height: 1.1;
-            margin: 0 0 0.5rem;
         }
 
         .lede {
             margin: 0;
             color: var(--muted);
-            font-size: 1rem;
-            line-height: 1.5;
+            font-size: 1.02rem;
         }
 
-        .meta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            margin-top: 0.85rem;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-
-        .dot {
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+        .card {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: calc(var(--radius) + 4px);
+            box-shadow: var(--shadow);
+            padding: 1.1rem;
         }
 
         .composer {
             display: flex;
             gap: 0.65rem;
-            margin-bottom: 1.25rem;
-            animation: rise 0.55s ease 0.05s both;
+            margin-bottom: 1rem;
         }
 
         .composer input {
             flex: 1;
             min-width: 0;
             border: 1px solid var(--line);
-            background: color-mix(in srgb, var(--bg-elevated) 88%, black);
+            background: #fff;
             color: var(--ink);
-            border-radius: var(--radius);
+            border-radius: 12px;
             padding: 0.9rem 1rem;
             font: inherit;
             outline: none;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         .composer input:focus {
-            border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
         }
 
         .composer button,
@@ -179,14 +94,11 @@
         .composer button {
             background: var(--accent);
             color: var(--accent-ink);
-            font-weight: 600;
-            border-radius: var(--radius);
-            padding: 0 1.15rem;
-            transition: transform 0.12s ease, filter 0.12s ease;
+            font-weight: 650;
+            border-radius: 12px;
+            padding: 0 1.2rem;
         }
 
-        .composer button:hover { filter: brightness(1.05); }
-        .composer button:active { transform: translateY(1px); }
         .composer button:disabled { opacity: 0.55; cursor: wait; }
 
         .list {
@@ -195,8 +107,7 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 0.55rem;
-            animation: rise 0.6s ease 0.1s both;
+            gap: 0.5rem;
         }
 
         .todo {
@@ -204,37 +115,30 @@
             grid-template-columns: auto 1fr auto;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.85rem 0.95rem;
-            background: color-mix(in srgb, var(--bg-elevated) 92%, black);
+            padding: 0.8rem 0.85rem;
+            background: #fff;
             border: 1px solid var(--line);
-            border-radius: var(--radius);
-            transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.15s ease;
+            border-radius: 12px;
         }
 
-        .todo.done {
-            opacity: 0.62;
-        }
-
+        .todo.done { opacity: 0.62; }
         .todo.done .title {
             text-decoration: line-through;
             color: var(--muted);
         }
-
-        .todo.removing {
-            opacity: 0;
-            transform: translateX(8px);
-        }
+        .todo.removing { opacity: 0; }
 
         .check {
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 0.35rem;
+            width: 1.3rem;
+            height: 1.3rem;
+            border-radius: 0.4rem;
             border: 1.5px solid var(--line);
             background: transparent;
             display: grid;
             place-items: center;
             color: transparent;
-            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+            padding: 0;
+            cursor: pointer;
         }
 
         .todo.done .check {
@@ -246,141 +150,101 @@
         .title {
             margin: 0;
             font-size: 0.98rem;
-            line-height: 1.35;
+            line-height: 1.4;
             word-break: break-word;
         }
 
         .title[contenteditable="true"] {
             outline: none;
-            border-bottom: 1px dashed color-mix(in srgb, var(--accent) 50%, transparent);
+            border-bottom: 1px dashed var(--accent);
         }
 
-        .todo-actions {
-            display: flex;
-            gap: 0.25rem;
-        }
+        .todo-actions { display: flex; gap: 0.15rem; }
 
         .todo-actions button {
             background: transparent;
             color: var(--muted);
-            padding: 0.35rem 0.45rem;
+            padding: 0.35rem 0.5rem;
             border-radius: 0.4rem;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
         }
 
         .todo-actions button:hover {
             color: var(--ink);
-            background: color-mix(in srgb, white 6%, transparent);
+            background: #f5f0e8;
         }
 
-        .todo-actions .delete:hover {
-            color: var(--danger);
-        }
+        .todo-actions .delete:hover { color: var(--danger); }
 
         .empty {
             text-align: center;
             color: var(--muted);
-            padding: 2.5rem 1rem;
+            padding: 2.2rem 1rem;
             border: 1px dashed var(--line);
-            border-radius: var(--radius);
+            border-radius: 12px;
         }
 
         .error {
             display: none;
-            margin-bottom: 1rem;
-            padding: 0.75rem 0.9rem;
-            border-radius: var(--radius);
-            background: color-mix(in srgb, var(--danger) 15%, transparent);
-            color: #ffc4c7;
+            margin-bottom: 0.85rem;
+            padding: 0.7rem 0.85rem;
+            border-radius: 12px;
+            background: #fee2e2;
+            color: var(--danger);
             font-size: 0.9rem;
         }
 
         .error.show { display: block; }
 
-        @keyframes rise {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .version {
+            margin-top: 1.25rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.78rem;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 520px) {
             .wrap { padding-top: 2rem; }
             .composer { flex-direction: column; }
             .composer button { padding: 0.85rem 1rem; }
-            .shell.has-nav { grid-template-columns: 1fr; }
-            .shell.has-nav .nav {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                border-right: 0;
-                border-bottom: 1px solid var(--line);
-            }
         }
     </style>
 </head>
 <body>
-    <div class="shell {{ $menuItems->isNotEmpty() ? 'has-nav' : '' }}">
-        @if ($menuItems->isNotEmpty())
-            <aside class="nav" aria-label="Menu">
-                <p class="nav-title">MENU 1.5</p>
-                @foreach ($menuItems as $item)
-                    <a href="{{ $item->href }}">
-                        @if ($item->icon)
-                            <span class="nav-icon">{{ $item->icon }}</span>
-                        @endif
-                        <span>{{ $item->label }}</span>
-                    </a>
-                @endforeach
-                <div class="version">v{{ config('app.version') }}</div>
-            </aside>
-        @endif
-        <div class="main">
     <div class="wrap">
         <header>
-            <h1 class="brand">{{ config('app.name') }} OTA TEST</h1>
-            <p class="lede">This text came from GitHub Container Registry. If you see it, OTA worked.</p>
-            @if ($spokeId)
-                <div class="meta"><span class="dot" aria-hidden="true"></span> {{ $spokeId }}</div>
-            @endif
+            <h1>{{ config('app.name') }}</h1>
+            <p class="lede">Add, edit, complete, and delete todos. Saved in MySQL on this machine.</p>
         </header>
 
-        <div id="error" class="error" role="alert"></div>
+        <div class="card">
+            <div id="error" class="error" role="alert"></div>
 
-        <form class="composer" id="composer">
-            <input
-                id="title"
-                name="title"
-                type="text"
-                maxlength="255"
-                placeholder="Add a todo…"
-                autocomplete="off"
-                required
-            >
-            <button type="submit">Add</button>
-        </form>
+            <form class="composer" id="composer">
+                <input id="title" name="title" type="text" maxlength="255" placeholder="Add a todo…" autocomplete="off" required>
+                <button type="submit">Add</button>
+            </form>
 
-        <ul class="list" id="list" aria-live="polite">
-            @forelse ($todos as $todo)
-                <li class="todo {{ $todo->done ? 'done' : '' }}" data-id="{{ $todo->id }}">
-                    <button type="button" class="check" data-action="toggle" aria-label="Toggle done">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                            <path d="M2.5 6.2 4.8 8.5 9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <p class="title">{{ $todo->title }}</p>
-                    <div class="todo-actions">
-                        <button type="button" data-action="edit">Edit</button>
-                        <button type="button" class="delete" data-action="delete">Delete</button>
-                    </div>
-                </li>
-            @empty
-                <li class="empty" id="empty">No todos yet. Add one above.</li>
-            @endforelse
-        </ul>
-        @if ($menuItems->isEmpty())
-            <div class="version" style="margin-top:1.5rem;color:var(--muted);font-size:0.75rem">v{{ config('app.version') }}</div>
-        @endif
-    </div>
+            <ul class="list" id="list" aria-live="polite">
+                @forelse ($todos as $todo)
+                    <li class="todo {{ $todo->done ? 'done' : '' }}" data-id="{{ $todo->id }}">
+                        <button type="button" class="check" data-action="toggle" aria-label="Toggle done">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                <path d="M2.5 6.2 4.8 8.5 9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <p class="title">{{ $todo->title }}</p>
+                        <div class="todo-actions">
+                            <button type="button" data-action="edit">Edit</button>
+                            <button type="button" class="delete" data-action="delete">Delete</button>
+                        </div>
+                    </li>
+                @empty
+                    <li class="empty" id="empty">No todos yet. Add one above.</li>
+                @endforelse
+            </ul>
         </div>
+        <div class="version">v{{ config('app.version') }} · local</div>
     </div>
 
     <script>
@@ -509,7 +373,7 @@
                     setTimeout(() => {
                         item.remove();
                         ensureEmptyState();
-                    }, 180);
+                    }, 160);
                 }
 
                 if (action === 'edit') {
@@ -553,9 +417,7 @@
                             ev.preventDefault();
                             titleEl.blur();
                         }
-                        if (ev.key === 'Escape') {
-                            finish(false);
-                        }
+                        if (ev.key === 'Escape') finish(false);
                     };
 
                     titleEl.addEventListener('blur', onBlur);

@@ -2,66 +2,60 @@
 setlocal EnableExtensions
 cd /d "%~dp0"
 
-set "INSTALL_DIR=C:\TodoSpoke"
+set "INSTALL_DIR=%LOCALAPPDATA%\TodoApp"
 
 echo ============================================
-echo  Todo Spoke Updater
+echo  Todo App updater
 echo ============================================
 echo.
 
-net session >nul 2>&1
+where docker >nul 2>&1
 if errorlevel 1 (
-  echo Please right-click update.bat and choose "Run as administrator".
+  echo Docker is not installed. Run install.bat first.
   pause
   exit /b 1
 )
 
 docker info >nul 2>&1
 if errorlevel 1 (
-  echo Start Docker Desktop first, then run update.bat again.
+  echo Start Docker Desktop, then run this updater again.
   pause
   exit /b 1
 )
 
 if not exist "%INSTALL_DIR%" (
-  echo %INSTALL_DIR% not found. Run install.bat first.
+  echo Todo App is not installed. Run install.bat first.
+  pause
+  exit /b 1
+)
+
+if not exist "%~dp0images\app.tar" (
+  echo Missing images\app.tar
   pause
   exit /b 1
 )
 
 echo Loading new images...
-for /f "tokens=2 delims==" %%A in ('findstr /b "APP_IMAGE=" "%INSTALL_DIR%\.env" 2^>nul') do set "APP_IMAGE=%%A"
-if "%APP_IMAGE%"=="" set "APP_IMAGE=localhost:5000/todo-app:latest"
-
-docker pull %APP_IMAGE% 2>nul
+docker load -i "%~dp0images\app.tar"
 if errorlevel 1 (
-  if exist "%~dp0images\app.tar" (
-    docker load -i "%~dp0images\app.tar"
-    docker tag todo-app:1.1 %APP_IMAGE% 2>nul
-  ) else (
-    echo ERROR: Could not pull %APP_IMAGE% and images\app.tar is missing.
-    pause
-    exit /b 1
-  )
+  echo Failed to load the app image.
+  pause
+  exit /b 1
 )
-if exist "%~dp0images\mysql.tar" (
-  docker load -i "%~dp0images\mysql.tar"
-)
+if exist "%~dp0images\mysql.tar" docker load -i "%~dp0images\mysql.tar"
 
 copy /Y "%~dp0docker-compose.yml" "%INSTALL_DIR%\docker-compose.yml" >nul
-:: Do NOT overwrite .env on update (keeps SPOKE_ID / secrets)
 
 cd /d "%INSTALL_DIR%"
-docker compose up -d
+docker compose -p todoapp up -d --force-recreate
 if errorlevel 1 (
   echo Update failed.
   pause
   exit /b 1
 )
 
+start "" "http://localhost:8080"
 echo.
-echo Update complete.
-echo Open http://localhost
-echo.
+echo Update complete. http://localhost:8080
 pause
 endlocal

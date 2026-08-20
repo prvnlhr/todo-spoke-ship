@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Todo;
-use App\Models\UserMenu;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -12,10 +11,7 @@ class TodoController extends Controller
 {
     public function index(Request $request): View|JsonResponse
     {
-        $spokeId = config('app.spoke_id');
-
         $todos = Todo::query()
-            ->when($spokeId, fn ($q) => $q->where('spoke_id', $spokeId))
             ->orderBy('done')
             ->orderByDesc('created_at')
             ->get(['id', 'title', 'done', 'created_at', 'updated_at']);
@@ -24,17 +20,7 @@ class TodoController extends Controller
             return response()->json(['todos' => $todos]);
         }
 
-        $menuItems = UserMenu::query()
-            ->forSpoke($spokeId)
-            ->orderBy('sort_order')
-            ->orderBy('label')
-            ->get(['id', 'label', 'href', 'icon']);
-
-        return view('todos', [
-            'todos' => $todos,
-            'menuItems' => $menuItems,
-            'spokeId' => $spokeId,
-        ]);
+        return view('todos', ['todos' => $todos]);
     }
 
     public function store(Request $request): JsonResponse
@@ -46,8 +32,6 @@ class TodoController extends Controller
         $todo = Todo::query()->create([
             'title' => trim($data['title']),
             'done' => false,
-            'spoke_id' => config('app.spoke_id'),
-            'synced_at' => null,
         ]);
 
         return response()->json(['todo' => $todo], 201);
@@ -64,17 +48,13 @@ class TodoController extends Controller
             $data['title'] = trim($data['title']);
         }
 
-        $todo->fill($data);
-        $todo->synced_at = null;
-        $todo->save();
+        $todo->update($data);
 
         return response()->json(['todo' => $todo->fresh()]);
     }
 
     public function destroy(Todo $todo): JsonResponse
     {
-        $todo->synced_at = null;
-        $todo->save();
         $todo->delete();
 
         return response()->json(['ok' => true]);

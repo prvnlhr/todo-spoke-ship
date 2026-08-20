@@ -13,7 +13,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY app/composer.json app/composer.lock ./
-RUN composer install --no-interaction --prefer-dist --no-scripts --no-autoloader
+RUN composer install --no-interaction --prefer-dist --no-scripts --no-autoloader --no-dev
 
 COPY app/ /var/www/html/
 
@@ -25,7 +25,7 @@ COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh \
     && chmod +x /usr/local/bin/entrypoint.sh
 
-ARG APP_VERSION=1.1.0
+ARG APP_VERSION=1.0.0
 ENV APP_VERSION=${APP_VERSION}
 
 EXPOSE 8000
