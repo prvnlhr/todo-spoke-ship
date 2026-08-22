@@ -11,6 +11,7 @@ services:
       - .env
     environment:
       APP_NAME: Todo
+      APP_ROLE: spoke
       APP_URL: http://localhost:8080
       DB_CONNECTION: mysql
       DB_HOST: mysql

@@ -1,0 +1,60 @@
+# Hub — same app image, APP_ROLE=hub. Fully offline (USB import).
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: todo-app:1.0
+    pull_policy: build
+    ports:
+      - "8090:8000"
+    env_file:
+      - .env
+    environment:
+      APP_NAME: "Todo Hub"
+      APP_ROLE: hub
+      APP_URL: http://localhost:8090
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: todo_hub
+      DB_USERNAME: hub
+      DB_PASSWORD: secret
+      SEED_ON_BOOT: "true"
+    volumes:
+      - hub_storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - hub
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: todo_hub
+      MYSQL_USER: hub
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    volumes:
+      - hub_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-prootsecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - hub
+
+volumes:
+  hub_mysql_data:
+  hub_storage:
+
+networks:
+  hub:
+    driver: bridge

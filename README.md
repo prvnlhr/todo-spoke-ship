@@ -6,8 +6,9 @@ This is **Phase 1** of hub-and-spoke: a spoke you can hand to anyone as a folder
 
 | Who | What | URL |
 | --- | --- | --- |
-| You (dev) | `docker compose up -d --build` | http://localhost:8080 |
-| Client | Double-click `ship/install.bat` (Windows) / `install.command` (Mac) / `install.sh` (Linux) | http://localhost:8080 |
+| You (dev spoke) | `docker compose up -d --build` | http://localhost:8080 |
+| You (dev hub) | `cd hub` → `docker compose up -d --build` | http://localhost:8090 |
+| Client spoke | Double-click `ship/install.bat` / `bash install.sh` | http://localhost:8080 |
 
 ---
 
@@ -29,9 +30,9 @@ Later phases (not in this build):
 
 | Phase | What |
 | --- | --- |
-| **1 (now)** | Spoke todo CRUD. MySQL. Zip/USB one-click install. |
-| **2** | Hub on a company PC (`APP_ROLE=hub`). Same image family. |
-| **3** | Data sync over LAN (`HUB_URL=http://<hub-ip>:8080`). No cloud. |
+| **1** | Spoke todo CRUD. MySQL. Zip/USB one-click install. |
+| **2 (now)** | Hub on office PC. USB JSON import. Select which spoke to pull. |
+| **3** | Per-client ship packages with unique `SPOKE_ID`. |
 | **4** | USB/zip updates for new UI versions (`update.bat` / `update.sh`). |
 
 No registry. No Watchtower. App updates travel the same way as install: a new `app.tar` on USB/zip.
@@ -67,7 +68,20 @@ Install location: `%LOCALAPPDATA%\TodoApp` (Windows) or `~/TodoApp` (Mac/Linux).
 
 ---
 
-## Run locally (you)
+## Hub (office, offline)
+
+```powershell
+cd hub
+docker compose up -d --build
+```
+
+Open [http://localhost:8090](http://localhost:8090). See `hub/README.md`.
+
+Sync: spoke **Export for hub (USB)** → copy JSON → hub **Import** (pick spoke). No internet / LAN.
+
+---
+
+## Run locally (spoke)
 
 ```powershell
 copy .env.example .env   # first time only; already present if you just cloned this tree
@@ -104,11 +118,12 @@ ship/
 
 ```
 spoke-demo/
-├── app/                 # Laravel todo CRUD
+├── app/                 # Laravel (hub + spoke via APP_ROLE)
 ├── docker/entrypoint.sh
 ├── Dockerfile
-├── docker-compose.yml   # local / build
-├── ship/                # client package
+├── docker-compose.yml   # spoke (dev)
+├── hub/                 # hub deploy (office)
+├── ship/                # spoke client package
 ├── build-ship.bat
 ├── build-ship.sh
 └── README.md
@@ -116,13 +131,14 @@ spoke-demo/
 
 ---
 
-## Phase 1 checklist
+## Phase checklist
 
 - [x] Single-page todo CRUD (create, edit, complete, delete)
 - [x] MySQL 8 in Docker
 - [x] Shared image `todo-app:1.0`
 - [x] Offline ship package (`app.tar` + `mysql.tar`)
 - [x] One-click Windows / Mac / Linux install
-- [ ] Hub (company PC)
-- [ ] LAN sync
-- [ ] Per-client spoke identity
+- [x] Hub UI (dashboard, spokes, USB import)
+- [x] Spoke export JSON for hub
+- [ ] Per-client spoke identity in ship packages
+- [ ] One-click hub installer package

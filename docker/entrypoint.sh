@@ -3,6 +3,12 @@ set -e
 
 cd /var/www/html
 
+if [ ! -f vendor/autoload.php ]; then
+  echo "Installing Composer dependencies..."
+  composer install --no-interaction --prefer-dist --no-scripts
+  composer dump-autoload --optimize
+fi
+
 mkdir -p \
   storage/framework/cache/data \
   storage/framework/sessions \
@@ -36,5 +42,9 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 php artisan migrate --force
+
+if [ "${SEED_ON_BOOT:-false}" = "true" ] && [ "${APP_ROLE:-spoke}" = "hub" ]; then
+  php artisan db:seed --force
+fi
 
 exec "$@"

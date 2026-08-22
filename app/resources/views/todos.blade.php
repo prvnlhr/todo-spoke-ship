@@ -203,6 +203,33 @@
             font-size: 0.78rem;
         }
 
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .toolbar .meta {
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .toolbar a {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 0.45rem 0.75rem;
+            background: #fff;
+        }
+
+        .toolbar a:hover { border-color: var(--accent); }
+
         @media (max-width: 520px) {
             .wrap { padding-top: 2rem; }
             .composer { flex-direction: column; }
@@ -216,6 +243,11 @@
             <h1>{{ config('app.name') }}</h1>
             <p class="lede">Add, edit, complete, and delete todos. Saved in MySQL on this machine.</p>
         </header>
+
+        <div class="toolbar">
+            <div class="meta">@if (!empty($spokeId)) Spoke <strong>{{ $spokeId }}</strong>@else Local spoke @endif</div>
+            <a href="{{ route('todos.export') }}">Export for hub (USB)</a>
+        </div>
 
         <div class="card">
             <div id="error" class="error" role="alert"></div>
